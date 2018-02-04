@@ -227,7 +227,7 @@ class TextReporter(ReporterBase):
             sep = line_length * '='
             yield from itertools.chain(
                 (sep,),
-                ('%02d. %s' % (idx + 1, line) for idx, line in enumerate(summary)),
+                ('%02d. %s' % (idx, line) for idx, line in enumerate(summary, 1)),
                 (sep, ''),
             )
 
