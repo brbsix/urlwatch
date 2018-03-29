@@ -126,7 +126,7 @@ class RegexMatchFilter(FilterBase):
 
 
 class LegacyHooksPyFilter(FilterBase):
-    FILENAME = os.path.expanduser('~/.urlwatch/lib/hooks.py')
+    FILENAME = os.path.expanduser('~/.urlwatch.migration/lib/hooks.py')
 
     def __init__(self, job, state):
         super().__init__(job, state)
