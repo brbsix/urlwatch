@@ -142,14 +142,7 @@ class LegacyHooksPyFilter(FilterBase):
         return self.hooks is not None
 
     def filter(self, data, subfilter=None):
-        try:
-            result = self.hooks.filter(self.job.get_location(), data)
-            if result is None:
-                result = data
-            return result
-        except Exception as e:
-            logger.warn('Could not apply legacy hooks filter: %s', e)
-            return data
+        return self.hooks.filter(self.job.get_location(), data)
 
 
 class Html2TextFilter(FilterBase):
