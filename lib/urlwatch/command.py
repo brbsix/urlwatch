@@ -98,7 +98,7 @@ class UrlwatchCommand:
     def list_urls(self):
         for idx, job in enumerate(self.urlwatcher.jobs, 1):
             if self.urlwatch_config.verbose:
-                print('%d: %r' % (idx, job))
+                print('%d: %s: (%r)' % (idx, job.get_guid(), job))
             else:
                 pretty_name = job.pretty_name()
                 location = job.get_location()
