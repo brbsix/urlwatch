@@ -35,12 +35,12 @@ import os
 import re
 import subprocess
 import requests
+import urllib3
 import urlwatch
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 from .util import TrackSubClasses
 
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +54,11 @@ class ShellError(Exception):
 
     def __str__(self):
         return '%s: Exit status %d' % (self.__class__.__name__, self.result)
+
+
+class CaptivePortalError(Exception):
+    """Exception raised when behind a captive portal"""
+    ...
 
 
 class NotModifiedError(Exception):
@@ -195,6 +200,17 @@ class UrlJob(Job):
             'http': os.getenv('HTTP_PROXY'),
             'https': os.getenv('HTTPS_PROXY'),
         }
+
+        # the following url is used by Chromium OS for portal detection
+        # it's a cookieless domain and probably the most current in use by Google
+        status_code = requests.get('http://www.gstatic.com/generate_204').status_code
+
+        # we're behind a captive portal if the status code returned from
+        # generate_204 is not 204 but otherwise successful (i.e. between
+        # 200 and 399, inclusive)
+        if status_code != 204 and status_code >= 200 and status_code <= 399:
+        # if 200 <= status_code < 204 or 204 < status_code <= 399:
+            raise CaptivePortalError()
 
         if job_state.timestamp is not None:
             headers['If-Modified-Since'] = email.utils.formatdate(job_state.timestamp)
